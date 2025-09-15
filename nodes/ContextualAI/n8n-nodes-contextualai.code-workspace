@@ -1,0 +1,14 @@
+{
+	"folders": [
+		{
+			"path": "../.."
+		},
+		{
+			"path": "../../../n8n-nodes-apify"
+		},
+		{
+			"path": "../../../../contextual-ai-notes"
+		}
+	],
+	"settings": {}
+}

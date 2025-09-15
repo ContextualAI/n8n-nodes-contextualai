@@ -1,19 +1,24 @@
 {
-  "name": "n8n-nodes-<...>",
+  "name": "n8n-nodes-contextualai",
   "version": "0.1.0",
-  "description": "",
+  "description": "n8n community node for Contextual AI - enterprise-grade RAG agents, document parsing, querying, and reranking",
   "keywords": [
-    "n8n-community-node-package"
+    "n8n-community-node-package",
+    "contextual-ai",
+    "rag",
+    "document-parsing",
+    "reranking",
+    "lmunit"
   ],
   "license": "MIT",
-  "homepage": "",
+  "homepage": "https://github.com/ContextualAI/n8n-nodes-contextualai",
   "author": {
-    "name": "",
+    "name": "Contextual AI Team",
     "email": ""
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/<...>/n8n-nodes-<...>.git"
+    "url": "https://github.com/ContextualAI/n8n-nodes-contextualai.git"
   },
   "engines": {
     "node": ">=20.15"
@@ -33,12 +38,10 @@
   "n8n": {
     "n8nNodesApiVersion": 1,
     "credentials": [
-      "dist/credentials/ExampleCredentialsApi.credentials.js",
-      "dist/credentials/HttpBinApi.credentials.js"
+      "dist/credentials/ContextualAiApi.credentials.js"
     ],
     "nodes": [
-      "dist/nodes/ExampleNode/ExampleNode.node.js",
-      "dist/nodes/HttpBin/HttpBin.node.js"
+      "dist/nodes/ContextualAI/ContextualAi.node.js"
     ]
   },
   "devDependencies": {
