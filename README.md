@@ -49,14 +49,40 @@ This node supports a comprehensive range of Contextual AI operations, organized 
   - Upload multiple documents via binary data
   - Support for various document formats (PDF, DOC/DOCX, PPT/PPTX)
   - Automatic document processing and indexing
+- **List agents**: Retrieve a list of all agents in your Contextual AI account
+  - View agent details and metadata
+  - Check agent status and configuration
+- **Delete agent**: Remove an agent from your Contextual AI account
+  - Permanent deletion of agent and associated data
+  - Requires agent ID for confirmation
+
+### Datastore
+- **Create datastore**: Create a new datastore for document storage
+  - Configure datastore name and settings
+  - Set up document storage and indexing
+- **Ingest document**: Upload and process documents into a datastore
+  - Support for multiple document formats (PDF, DOC/DOCX, PPT/PPTX, HTML)
+  - Optional metadata attachment
+  - Batch processing capabilities
+- **Get document metadata**: Retrieve metadata for a specific document
+  - Document information and processing status
+  - Metadata and indexing details
+- **List datastores**: Retrieve a list of all datastores in your account
+  - View datastore details and configuration
+  - Check datastore status and document counts
 
 ### Parser  
 - **Parse document**: Parse documents using Contextual AI's advanced document parser
   - Support for PDF, DOC/DOCX, PPT/PPTX files
-  - Configurable parsing modes and options
-  - Figure caption extraction
+  - Configurable parsing modes (standard)
+  - Figure caption extraction (concise/detailed)
   - Document hierarchy preservation
   - Page range selection
+  - Returns job ID for status monitoring
+- **Parse status**: Check the status of a document parsing job
+  - Monitor parsing progress
+  - Retrieve parsed results when completed
+  - Track job status and file information
 
 ### Query
 - **Query agent**: Query existing Contextual AI agents with intelligent retrieval
@@ -151,11 +177,29 @@ This node has been tested with n8n version 1.57.0 and is compatible with:
 1. Select **"Parser"** as the resource and **"Parse document"** as the operation
 2. Provide a document file via binary data
 3. Configure parsing options:
-   - **Mode**: Choose parsing mode (default, detailed, etc.)
-   - **Figure captions**: Enable/disable figure caption extraction
-   - **Hierarchy**: Preserve document structure
-   - **Page range**: Specify pages to parse
-4. Execute to parse the document and get structured output
+   - **Parse Mode**: Choose parsing mode (standard)
+   - **Figure Caption Mode**: Choose caption extraction (concise/detailed)
+   - **Enable Document Hierarchy**: Preserve document structure
+   - **Page Range**: Specify pages to parse (e.g., "0-5")
+4. Execute to submit the parse job and receive a job ID
+5. Use **"Parse status"** operation with the job ID to monitor progress and retrieve results
+
+### Datastore Management
+
+1. **Create a datastore**:
+   - Select **"Datastore"** as the resource and **"Create datastore"** as the operation
+   - Enter a datastore name
+   - Execute to create the datastore and receive the datastore ID
+
+2. **Upload documents**:
+   - Select **"Ingest document"** as the operation
+   - Provide the datastore ID and document files via binary data
+   - Optionally add metadata as JSON
+   - Execute to upload and process documents
+
+3. **Manage documents**:
+   - Use **"List datastores"** to view all datastores
+   - Use **"Get document metadata"** to retrieve specific document information
 
 ### Document Reranking
 
@@ -177,9 +221,11 @@ This node has been tested with n8n version 1.57.0 and is compatible with:
 
 ### Advanced Workflow Examples
 
-- **Document Processing Pipeline**: Parse documents → Create agent → Query agent
+- **Document Processing Pipeline**: Parse documents → Create datastore → Ingest documents → Create agent → Query agent
 - **Quality Assurance**: Query agent → Evaluate response with LMUnit
 - **Content Optimization**: Rerank documents → Parse top results → Create refined agent
+- **Batch Document Processing**: List datastores → Ingest multiple documents → Monitor processing status
+- **Agent Management**: List agents → Delete unused agents → Create new agents with updated documents
 
 ## Resources
 
@@ -215,6 +261,16 @@ This node has been tested with n8n version 1.57.0 and is compatible with:
    - Ensure documents are provided in the correct format
    - Check query and document content validity
    - Verify custom instructions are properly formatted
+
+6. **Parse job failures**
+   - Verify the job ID format is correct (should be a UUID)
+   - Check if the parse job exists and hasn't expired
+   - Ensure the original document was valid and supported
+
+7. **Datastore operation failures**
+   - Verify datastore ID format is correct (should be a UUID)
+   - Check if the datastore exists in your account
+   - Ensure you have proper permissions for the datastore
 
 ### Getting help
 
