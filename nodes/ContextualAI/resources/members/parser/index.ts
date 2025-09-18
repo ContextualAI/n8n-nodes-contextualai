@@ -1,10 +1,11 @@
 import { INodeProperties, INodePropertyOptions } from 'n8n-workflow';
 import * as parse from './operations/parse-document';
 import * as parseStatus from './operations/parse-status';
+import * as parseResult from './operations/parse-result';
 
 export const name = 'Parser';
 
-const operations: INodePropertyOptions[] = [parse.option, parseStatus.option];
+const operations: INodePropertyOptions[] = [parse.option, parseStatus.option, parseResult.option];
 
 const operationSelect: INodeProperties = {
 	displayName: 'Operation',
@@ -22,6 +23,7 @@ export const properties: INodeProperties[] = [
 	operationSelect,
 	...parse.properties,
 	...parseStatus.properties,
+    ...parseResult.properties,
 ];
 
 export const methods = {} as const;

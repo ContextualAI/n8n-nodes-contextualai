@@ -15,6 +15,7 @@ export const properties: INodeProperties[] = [
 		name: 'query',
 		type: 'string',
 		default: '',
+		placeholder: 'e.g. What is machine learning?',
 		required: true,
 		displayOptions: { show: { resource: ['Reranker'], operation: [name] } },
 	},

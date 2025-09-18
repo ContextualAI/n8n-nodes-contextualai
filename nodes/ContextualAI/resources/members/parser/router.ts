@@ -4,6 +4,7 @@ import { name as parseOperationName } from './operations/parse-document';
 import { parseDocument } from './operations/parse-document/execute';
 import { name as parseStatusOperationName } from './operations/parse-status';
 import { parseStatus } from './operations/parse-status/execute';
+import { name as parseResultOperationName, parseResult } from './operations/parse-result';
 
 export async function parserRouter(
 	this: IExecuteFunctions,
@@ -21,6 +22,8 @@ export async function parserRouter(
 			return await parseDocument.call(this, i);
 		case parseStatusOperationName:
 			return await parseStatus.call(this, i);
+		case parseResultOperationName:
+			return await parseResult.call(this, i);
 		default:
 			throw new NodeOperationError(this.getNode(), `Operation ${operation} not found.`);
 	}

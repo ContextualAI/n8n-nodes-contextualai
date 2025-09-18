@@ -16,6 +16,7 @@ export const rawProperties: INodeProperties[] = [
 		name: 'datastoreName',
 		type: 'string',
 		default: '',
+		placeholder: 'e.g. Product Documentation',
 		description: 'Name of the datastore',
 		displayOptions: { show: { resource: ['Datastore'], operation: [name] } },
 		required: true,
