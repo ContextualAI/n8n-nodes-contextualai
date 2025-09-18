@@ -1,7 +1,7 @@
-import { IExecuteFunctions, INodeExecutionData, NodeApiError, NodeOperationError, sleep } from 'n8n-workflow';
+import { IExecuteFunctions, INodeExecutionData, NodeApiError, NodeOperationError } from 'n8n-workflow';
 
 async function apiRequest(this: IExecuteFunctions, options: any) {
-	const { method, uri, qs, body, json = true, headers = {} } = options;
+	const { method, uri, qs, body, json = true, headers = {}, formData } = options;
 	const endpoint = `https://api.contextual.ai${uri}`;
 	const authenticationMethod = this.getNodeParameter('authentication', 0) as string;
 
@@ -9,13 +9,20 @@ async function apiRequest(this: IExecuteFunctions, options: any) {
 		method,
 		qs,
 		url: endpoint,
-		body,
-		json,
 		headers: {
 			accept: 'application/json',
 			...headers,
 		},
 	};
+
+	if (formData) {
+		requestOptions.formData = formData;
+		requestOptions.json = true;
+	} else if (body && method !== 'GET') {
+		requestOptions.body = body;
+		requestOptions.json = json;
+	}
+
 	if (method === 'GET') delete requestOptions.body;
 
 	try {
@@ -38,9 +45,15 @@ export async function parseDocument(this: IExecuteFunctions, i: number): Promise
 	const figureCaptionMode = this.getNodeParameter('figureCaptionMode', i) as string;
 	const enableDocumentHierarchy = this.getNodeParameter('enableDocumentHierarchy', i) as boolean;
 	const pageRange = this.getNodeParameter('pageRange', i) as string;
-	const outputTypes = this.getNodeParameter('outputTypes', i) as string;
 
-	// Support comma-separated names; auto-pick the first available if multiple
+	// Validate required parameters
+	if (!parseMode) {
+		throw new NodeOperationError(this.getNode(), 'Parse mode is required');
+	}
+	if (!figureCaptionMode) {
+		throw new NodeOperationError(this.getNode(), 'Figure caption mode is required');
+	}
+
 	const item = this.getInputData()[i] as INodeExecutionData;
 	const binaryObj = item.binary || {};
 	const requested = (binaryPropertyName || '')
@@ -56,48 +69,55 @@ export async function parseDocument(this: IExecuteFunctions, i: number): Promise
 	const binary = this.helpers.assertBinaryData(i, selectedKey);
 	const buffer = await this.helpers.getBinaryDataBuffer(i, selectedKey);
 
-	const form: any = {
+	const formData: any = {
 		raw_file: {
 			value: buffer,
 			options: {
-				filename: binary.fileName || 'document',
-				contentType: binary.mimeType || 'application/octet-stream',
+				filename: binary.fileName || 'document.pdf',
+				contentType: binary.mimeType || 'application/pdf',
 			},
 		},
-		parse_mode: parseMode,
-		figure_caption_mode: figureCaptionMode,
-		enable_document_hierarchy: enableDocumentHierarchy,
+		parse_mode: String(parseMode),
+		figure_caption_mode: String(figureCaptionMode),
+		enable_document_hierarchy: String(enableDocumentHierarchy),
+		enable_split_tables: 'false',
 	};
-	if (pageRange) form.page_range = pageRange;
+
+	if (pageRange) {
+		formData.page_range = pageRange;
+	}
+
+	const splitTablesEnabled = this.getNodeParameter('enableSplitTables', i, false) as boolean;
+	const maxSplitTableCells = this.getNodeParameter('maxSplitTableCells', i, '') as string | number;
+	if (splitTablesEnabled) {
+		formData.enable_split_tables = 'true';
+		if (maxSplitTableCells) {
+			formData.max_split_table_cells = String(maxSplitTableCells);
+		}
+	}
+
+	Object.keys(formData).forEach((key) => {
+		if (formData[key] === undefined || formData[key] === null) {
+			delete formData[key];
+		}
+	});
 
 	// Submit parse job
 	const submit = await apiRequest.call(this, {
 		method: 'POST',
 		uri: '/v1/parse',
-		body: form,
-		json: false,
+		formData,
 	});
 	const jobId = submit?.job_id || submit?.data?.job_id;
-	if (!jobId) throw new NodeOperationError(this.getNode(), 'No parse job id returned');
-
-	// Poll status
-	while (true) {
-		const statusResp = await apiRequest.call(this, {
-			method: 'GET',
-			uri: `/v1/parse/jobs/${jobId}/status`,
-		});
-		const status = statusResp?.status || statusResp?.data?.status;
-		if (status === 'completed') break;
-		if (status === 'failed') throw new NodeOperationError(this.getNode(), 'Document parsing failed');
-		await sleep(5000);
+	if (!jobId) {
+		throw new NodeOperationError(this.getNode(), `No parse job id returned. Response: ${JSON.stringify(submit)}`);
 	}
 
-	// Fetch results
-	const results = await apiRequest.call(this, {
-		method: 'GET',
-		uri: `/v1/parse/jobs/${jobId}/results`,
-		qs: { output_types: outputTypes },
-	});
-
-	return { json: results };
+	return {
+		json: {
+			jobId,
+			status: 'submitted',
+			message: 'Parse job submitted successfully. Use the Parse Status operation to check progress.',
+		},
+	};
 }

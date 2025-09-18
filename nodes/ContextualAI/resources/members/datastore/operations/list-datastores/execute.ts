@@ -70,5 +70,14 @@ export async function listDatastores(this: IExecuteFunctions, i: number): Promis
 		qs,
 	});
 
-	return { json: resp };
+	let parsedResp = resp;
+	if (typeof resp === 'string') {
+		try {
+			parsedResp = JSON.parse(resp);
+		} catch (e) {
+			throw new NodeOperationError(this.getNode(), 'Failed to parse API response as JSON');
+		}
+	}
+
+	return { json: parsedResp };
 }

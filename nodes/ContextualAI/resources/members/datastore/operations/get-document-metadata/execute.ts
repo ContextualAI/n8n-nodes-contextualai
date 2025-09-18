@@ -17,7 +17,7 @@ async function apiRequest(this: IExecuteFunctions, options: any) {
 
 	if (formData) {
 		requestOptions.formData = formData;
-		requestOptions.json = true; 
+		requestOptions.json = true;
 	} else if (body && method !== 'GET') {
 		requestOptions.body = body;
 		requestOptions.json = json;

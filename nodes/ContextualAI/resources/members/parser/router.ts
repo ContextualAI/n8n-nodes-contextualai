@@ -2,6 +2,8 @@ import { IExecuteFunctions, INodeExecutionData, NodeOperationError } from 'n8n-w
 import { name as parserResourceName } from './index';
 import { name as parseOperationName } from './operations/parse-document';
 import { parseDocument } from './operations/parse-document/execute';
+import { name as parseStatusOperationName } from './operations/parse-status';
+import { parseStatus } from './operations/parse-status/execute';
 
 export async function parserRouter(
 	this: IExecuteFunctions,
@@ -17,6 +19,8 @@ export async function parserRouter(
 	switch (operation) {
 		case parseOperationName:
 			return await parseDocument.call(this, i);
+		case parseStatusOperationName:
+			return await parseStatus.call(this, i);
 		default:
 			throw new NodeOperationError(this.getNode(), `Operation ${operation} not found.`);
 	}

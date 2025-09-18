@@ -29,14 +29,37 @@ async function apiRequest(this: IExecuteFunctions, options: any) {
 
 export async function rerankDocuments(this: IExecuteFunctions, i: number): Promise<INodeExecutionData> {
 	const query = this.getNodeParameter('query', i) as string;
-	const documentsStr = this.getNodeParameter('documents', i) as string;
+	const documentsParam = this.getNodeParameter('documents', i);
 	const instruction = this.getNodeParameter('instruction', i) as string;
 	const model = this.getNodeParameter('model', i) as string;
 	const topN = this.getNodeParameter('topN', i) as number;
-	const metadataStr = this.getNodeParameter('metadata', i) as string;
+	const metadataParam = this.getNodeParameter('metadata', i);
 
-	const documents = documentsStr.split(',').map((s) => s.trim()).filter(Boolean);
-	const metadata = metadataStr ? metadataStr.split(',').map((s) => s.trim()) : undefined;
+	let documents: string[];
+	if (Array.isArray(documentsParam)) {
+		documents = documentsParam.map(doc => String(doc).trim()).filter(Boolean);
+	} else if (typeof documentsParam === 'string') {
+		documents = documentsParam.split(',').map((s) => s.trim()).filter(Boolean);
+	} else {
+		throw new Error('Documents parameter must be a string or array');
+	}
+
+	if (documents.length === 0) {
+		throw new Error('At least one document is required');
+	}
+
+	let metadata: string[] | undefined;
+	if (metadataParam) {
+		if (Array.isArray(metadataParam)) {
+			metadata = metadataParam.map(meta => String(meta).trim()).filter(Boolean);
+		} else if (typeof metadataParam === 'string') {
+			metadata = metadataParam.split(',').map((s) => s.trim()).filter(Boolean);
+		}
+	}
+
+	if (metadata && metadata.length > 0 && metadata.length !== documents.length) {
+		throw new Error(`Metadata count (${metadata.length}) must match documents count (${documents.length})`);
+	}
 
 	const body: any = { query, documents, model };
 	if (instruction) body.instruction = instruction;

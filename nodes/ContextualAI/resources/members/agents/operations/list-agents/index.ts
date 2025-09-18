@@ -1,5 +1,5 @@
 import { INodeProperties, INodePropertyOptions } from 'n8n-workflow';
-import { runHooks } from './hooks.js';
+import { runHooks } from './hooks';
 
 export const name = 'List Agents';
 

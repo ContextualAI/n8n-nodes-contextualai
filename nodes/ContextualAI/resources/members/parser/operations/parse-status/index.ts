@@ -1,23 +1,23 @@
 import { INodeProperties, INodePropertyOptions } from 'n8n-workflow';
 import { runHooks } from './hooks';
 
-export const name = 'Delete Agent';
+export const name = 'Parse Status';
 
 const baseOption: INodePropertyOptions = {
 	name: name,
 	value: name,
-	description: 'Delete a given agent (irreversible operation)',
-	action: 'Delete Agent',
+	description: 'Get the status of a parse job',
+	action: 'Parse Status',
 };
 
 export const rawProperties: INodeProperties[] = [
 	{
-		displayName: 'Agent ID',
-		name: 'agentId',
+		displayName: 'Job ID',
+		name: 'jobId',
 		type: 'string',
 		default: '',
-		description: 'ID of the agent to delete',
-		displayOptions: { show: { resource: ['Agent'], operation: [name] } },
+		description: 'ID of the parse job to check status for',
+		displayOptions: { show: { resource: ['Parser'], operation: [name] } },
 		required: true,
 	},
 ];
