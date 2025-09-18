@@ -49,11 +49,11 @@ export async function queryAgent(this: IExecuteFunctions, i: number): Promise<IN
 	const documentFiltersStr = this.getNodeParameter('documentFilters', i, '') as string;
 	const overrideConfigurationStr = this.getNodeParameter('overrideConfiguration', i, '') as string;
 
-	if (!agentId) {
+	if (!agentId || agentId === 'empty-agent') {
 		throw new NodeOperationError(this.getNode(), 'Agent ID is required');
 	}
 
-	if (!query) {
+	if (!query || query === 'empty-query') {
 		throw new NodeOperationError(this.getNode(), 'Query is required');
 	}
 

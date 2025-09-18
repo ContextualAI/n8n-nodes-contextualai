@@ -1,0 +1,54 @@
+{
+	"nodes": [
+		{
+			"parameters": {},
+			"id": "d5f4d9a7-5c9a-4f8b-9e3f-1a2b3c4d5e6f",
+			"name": "Start",
+			"type": "n8n-nodes-base.start",
+			"typeVersion": 1,
+			"position": [240, 300]
+		},
+		{
+			"parameters": {
+				"authentication": "contextualAiApi",
+				"resource": "Query",
+				"operation": "Query agent",
+				"agentId": "123e4567-e89b-12d3-a456-426614174000",
+				"query": "What is machine learning?",
+				"retrievalsOnly": false,
+				"includeRetrievalContentText": true,
+				"stream": false,
+				"conversationId": "",
+				"llmModelId": "",
+				"conversationHistory": "",
+				"structuredOutput": "",
+				"documentFilters": "",
+				"overrideConfiguration": ""
+			},
+			"id": "a1b2c3d4-e5f6-7890-abcd-ef1234567897",
+			"name": "Query Agent",
+			"type": "n8n-nodes-contextualai.contextualAi",
+			"typeVersion": 1,
+			"position": [460, 300],
+			"credentials": {
+				"contextualAiApi": {
+					"id": "test-credentials",
+					"name": "Test Contextual AI API"
+				}
+			}
+		}
+	],
+	"connections": {
+		"Start": {
+			"main": [
+				[
+					{
+						"node": "Query Agent",
+						"type": "main",
+						"index": 0
+					}
+				]
+			]
+		}
+	}
+}

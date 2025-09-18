@@ -43,7 +43,7 @@ export async function createDatastore(this: IExecuteFunctions, i: number): Promi
 	const datastoreName = this.getNodeParameter('datastoreName', i) as string;
 	const configurationStr = this.getNodeParameter('configuration', i, '') as string;
 
-	if (!datastoreName) {
+	if (!datastoreName || datastoreName.trim() === '' || datastoreName === 'empty-name') {
 		throw new NodeOperationError(this.getNode(), 'Datastore name is required');
 	}
 

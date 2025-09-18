@@ -47,10 +47,10 @@ export async function parseDocument(this: IExecuteFunctions, i: number): Promise
 	const pageRange = this.getNodeParameter('pageRange', i) as string;
 
 	// Validate required parameters
-	if (!parseMode) {
+	if (!parseMode || parseMode === 'empty-parse-mode') {
 		throw new NodeOperationError(this.getNode(), 'Parse mode is required');
 	}
-	if (!figureCaptionMode) {
+	if (!figureCaptionMode || figureCaptionMode === 'empty-figure-caption-mode') {
 		throw new NodeOperationError(this.getNode(), 'Figure caption mode is required');
 	}
 

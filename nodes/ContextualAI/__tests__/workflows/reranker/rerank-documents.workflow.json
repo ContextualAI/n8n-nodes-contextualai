@@ -1,0 +1,49 @@
+{
+	"nodes": [
+		{
+			"parameters": {},
+			"id": "d5f4d9a7-5c9a-4f8b-9e3f-1a2b3c4d5e6f",
+			"name": "Start",
+			"type": "n8n-nodes-base.start",
+			"typeVersion": 1,
+			"position": [240, 300]
+		},
+		{
+			"parameters": {
+				"authentication": "contextualAiApi",
+				"resource": "Reranker",
+				"operation": "Rerank documents",
+				"query": "machine learning algorithms",
+				"documents": ["Machine learning algorithms can be supervised or unsupervised", "Deep learning is a subset of machine learning using neural networks", "Statistical analysis is fundamental to data science"],
+				"instruction": "",
+				"model": "contextual-reranker-v1",
+				"topN": 3,
+				"metadata": ["source: ml-basics.pdf", "source: deep-learning.pdf", "source: statistics.pdf"]
+			},
+			"id": "a1b2c3d4-e5f6-7890-abcd-ef1234567898",
+			"name": "Rerank Documents",
+			"type": "n8n-nodes-contextualai.contextualAi",
+			"typeVersion": 1,
+			"position": [460, 300],
+			"credentials": {
+				"contextualAiApi": {
+					"id": "test-credentials",
+					"name": "Test Contextual AI API"
+				}
+			}
+		}
+	],
+	"connections": {
+		"Start": {
+			"main": [
+				[
+					{
+						"node": "Rerank Documents",
+						"type": "main",
+						"index": 0
+					}
+				]
+			]
+		}
+	}
+}

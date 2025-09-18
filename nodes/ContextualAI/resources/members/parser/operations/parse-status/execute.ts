@@ -39,7 +39,7 @@ async function apiRequest(this: IExecuteFunctions, options: any) {
 export async function parseStatus(this: IExecuteFunctions, i: number): Promise<INodeExecutionData> {
 	const jobId = this.getNodeParameter('jobId', i) as string;
 
-	if (!jobId) {
+	if (!jobId || jobId === 'empty-job-id') {
 		throw new NodeOperationError(this.getNode(), 'Job ID is required');
 	}
 
