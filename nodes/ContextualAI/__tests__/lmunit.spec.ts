@@ -137,10 +137,10 @@ describe('ContextualAI LMUnit Operations', () => {
 					id: '123e4567-e89b-12d3-a456-426614174001',
 					query: 'What is the capital of Italy?',
 					response: 'The capital of Italy is Milan.',
-					unit_test: 'The response should mention Rome as the capital of Italy.',
-					score: 0.15,
+					unit_test: 'Is the response clear and well-structured?',
+					score: 1.2,
 					passed: false,
-					explanation: 'The response incorrectly identifies Milan instead of Rome as the capital of Italy.',
+					explanation: 'The response is brief and direct but contains incorrect information, which affects its overall clarity and usefulness.',
 					created_at: '2023-01-01T00:00:00.000Z',
 				},
 			};
@@ -180,7 +180,7 @@ describe('ContextualAI LMUnit Operations', () => {
 			const parsedData = typeof data === 'string' ? JSON.parse(data) : data;
 			expect(parsedData).toEqual(mockFailedResult);
 			expect(parsedData.data.passed).toBe(false);
-			expect(parsedData.data.score).toBe(0.15);
+			expect(parsedData.data.score).toBe(1.2);
 
 			expect(scope.isDone()).toBe(true);
 		});

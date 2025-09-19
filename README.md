@@ -71,6 +71,14 @@ This node supports a comprehensive range of Contextual AI operations, organized 
   - View datastore details and configuration
   - Check datastore status and document counts
 
+### Query
+- **Query agent**: Query existing Contextual AI agents with intelligent retrieval
+  - Natural language querying capabilities
+  - Optional retrieval-only mode
+  - Document readiness checking
+  - Contextual response generation
+  - Retrieval content inclusion
+
 ### Parser  
 - **Parse document**: Parse documents using Contextual AI's advanced document parser
   - Support for PDF, DOC/DOCX, PPT/PPTX files
@@ -83,14 +91,10 @@ This node supports a comprehensive range of Contextual AI operations, organized 
   - Monitor parsing progress
   - Retrieve parsed results when completed
   - Track job status and file information
-
-### Query
-- **Query agent**: Query existing Contextual AI agents with intelligent retrieval
-  - Natural language querying capabilities
-  - Optional retrieval-only mode
-  - Document readiness checking
-  - Contextual response generation
-  - Retrieval content inclusion
+- **Parse result**: Get the results of a completed parse job
+  - Retrieve parsed content in multiple formats (markdown-document, markdown-per-page, blocks-per-page)
+  - Access document metadata and hierarchy information
+  - Get structured content blocks with confidence levels and bounding boxes
 
 ### Reranker
 - **Rerank documents**: Rank documents according to their relevance to a query
@@ -109,14 +113,14 @@ This node supports a comprehensive range of Contextual AI operations, organized 
 ### AI Tools Integration
 
 All Contextual AI node operations can be combined with n8n's AI tools to create powerful workflows.
-For example, you can parse documents using the Parser, create an agent with the parsed content, and then use AI models to analyze or summarize the information.
+For example, you can ingest documents into a datastore, create an agent from that information, and then query over the documents for grounded responses and citations.
 
 ## Credentials
 
 This node requires a Contextual AI API key for authentication.
 
 ### Prerequisites
-- Sign up for a Contextual AI account at [app.contextual.ai](https://app.contextual.ai)
+- Sign up for a free trial of Contextual AI account at [app.contextual.ai](https://app.contextual.ai)
 - Obtain your API key from the Contextual AI dashboard
 
 ### Setup
@@ -162,28 +166,6 @@ This node has been tested with n8n version 1.57.0 and is compatible with:
 5. Configure document processing options if needed
 6. Execute to create the agent and upload documents
 
-### Querying an Agent
-
-1. Select **"Query"** as the resource and **"Query agent"** as the operation
-2. Enter the **Agent ID** and your **Query**
-3. Configure query options:
-   - Enable **retrieval-only mode** for document search without generation
-   - Include **retrieval content text** for context
-   - Set **document readiness** checking
-4. Execute to get the agent's response
-
-### Document Parsing
-
-1. Select **"Parser"** as the resource and **"Parse document"** as the operation
-2. Provide a document file via binary data
-3. Configure parsing options:
-   - **Parse Mode**: Choose parsing mode (standard)
-   - **Figure Caption Mode**: Choose caption extraction (concise/detailed)
-   - **Enable Document Hierarchy**: Preserve document structure
-   - **Page Range**: Specify pages to parse (e.g., "0-5")
-4. Execute to submit the parse job and receive a job ID
-5. Use **"Parse status"** operation with the job ID to monitor progress and retrieve results
-
 ### Datastore Management
 
 1. **Create a datastore**:
@@ -197,9 +179,33 @@ This node has been tested with n8n version 1.57.0 and is compatible with:
    - Optionally add metadata as JSON
    - Execute to upload and process documents
 
-3. **Manage documents**:
+3. **Using data connectors (Optional)**:
+   > **Note**: To use source connectors for your datastore, you need to configure them in the [Contextual AI platform](https://app.contextual.ai) first, then use that datastore in your n8n workflow.
+   
+   - **Step 1**: Configure connectors in the [Contextual AI platform](https://app.contextual.ai)
+     - Go to Datastores → Create → Select "Third-Party Connection"
+     - Choose your data source (Google Drive, SharePoint)
+     - Authorize and select specific folders to sync
+     - Wait for initial sync to complete (status shows "Synced" with green checkmark)
+   - **Step 2**: Use the connector datastore in your n8n workflow
+     - Copy the datastore ID from the platform
+     - Use this ID when creating agents or querying in n8n
+     - The datastore will automatically stay in sync with your source data
+   - **Benefits**: No manual document uploads, automatic permissions enforcement, real-time data updates
+
+4. **Manage documents**:
    - Use **"List datastores"** to view all datastores
    - Use **"Get document metadata"** to retrieve specific document information
+
+### Querying an Agent
+
+1. Select **"Query"** as the resource and **"Query agent"** as the operation
+2. Enter the **Agent ID** and your **Query**
+3. Configure query options:
+   - Enable **retrieval-only mode** for document search without generation
+   - Include **retrieval content text** for context
+   - Set **document readiness** checking
+4. Execute to get the agent's response
 
 ### Document Reranking
 
@@ -218,6 +224,19 @@ This node has been tested with n8n version 1.57.0 and is compatible with:
    - **Model Response**: The response to evaluate
    - **Unit Test Criteria**: The criteria for evaluation
 3. Execute to get a score from 1-5 on the unit test
+
+### Document Parsing
+
+1. Select **"Parser"** as the resource and **"Parse document"** as the operation
+2. Provide a document file via binary data
+3. Configure parsing options:
+   - **Parse Mode**: Choose parsing mode (standard)
+   - **Figure Caption Mode**: Choose caption extraction (concise/detailed)
+   - **Enable Document Hierarchy**: Preserve document structure
+   - **Page Range**: Specify pages to parse (e.g., "0-5")
+4. Execute to submit the parse job and receive a job ID
+5. Use **"Parse status"** operation with the job ID to monitor progress and retrieve results
+
 
 ### Advanced Workflow Examples
 

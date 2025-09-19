@@ -1,7 +1,7 @@
 {
   "name": "n8n-nodes-contextualai",
   "version": "0.1.0",
-  "description": "n8n community node for Contextual AI - enterprise-grade RAG agents, document parsing, querying, and reranking",
+  "description": "n8n community node for Contextual AI - enterprise-grade RAG agents, document parsing, querying, reranking, and evaluation",
   "keywords": [
     "n8n-community-node-package",
     "contextual-ai",
