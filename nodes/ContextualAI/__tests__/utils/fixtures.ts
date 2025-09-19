@@ -153,7 +153,7 @@ export const queryAgentResult = () => {
 export const rerankDocumentsResult = () => {
 	return {
 		data: {
-			query: 'machine learning algorithms',
+			query: 'I want retrieve information about machine learning algorithms from high quality sources',
 			ranked_documents: [
 				{
 					document: 'Deep learning is a subset of machine learning using neural networks',
