@@ -188,9 +188,69 @@ export const runLmunitResult = () => {
 			query: 'What is the capital of France?',
 			response: 'The capital of France is Paris.',
 			unit_test: 'The response should mention Paris as the capital of France.',
-			score: 0.95,
+			score: 5,
 			passed: true,
-			explanation: 'The response correctly identifies Paris as the capital of France, which matches the unit test criteria.',
+			explanation: 'The response correctly identifies Paris as the capital of France, which matches the unit test criteria perfectly.',
+			created_at: '2023-01-01T00:00:00.000Z',
+		},
+	};
+};
+
+export const runLmunitStronglyFailsResult = () => {
+	return {
+		data: {
+			id: '123e4567-e89b-12d3-a456-426614174001',
+			query: 'What is the capital of Italy?',
+			response: 'I don\'t know.',
+			unit_test: 'The response should provide the correct capital city of Italy.',
+			score: 1,
+			passed: false,
+			explanation: 'The response strongly fails to meet the criteria by not providing any useful information about Italy\'s capital.',
+			created_at: '2023-01-01T00:00:00.000Z',
+		},
+	};
+};
+
+export const runLmunitFailsResult = () => {
+	return {
+		data: {
+			id: '123e4567-e89b-12d3-a456-426614174002',
+			query: 'What is the capital of Italy?',
+			response: 'The capital of Italy is Milan.',
+			unit_test: 'The response should provide the correct capital city of Italy.',
+			score: 2,
+			passed: false,
+			explanation: 'The response fails to meet the criteria by providing incorrect information about Italy\'s capital.',
+			created_at: '2023-01-01T00:00:00.000Z',
+		},
+	};
+};
+
+export const runLmunitNeutralResult = () => {
+	return {
+		data: {
+			id: '123e4567-e89b-12d3-a456-426614174003',
+			query: 'What is the capital of Italy?',
+			response: 'Italy has a capital city.',
+			unit_test: 'The response should provide the correct capital city of Italy.',
+			score: 3,
+			passed: false,
+			explanation: 'The response is neutral - it acknowledges Italy has a capital but doesn\'t specify which city.',
+			created_at: '2023-01-01T00:00:00.000Z',
+		},
+	};
+};
+
+export const runLmunitPassesResult = () => {
+	return {
+		data: {
+			id: '123e4567-e89b-12d3-a456-426614174004',
+			query: 'What is the capital of Italy?',
+			response: 'The capital of Italy is Rome.',
+			unit_test: 'The response should provide the correct capital city of Italy.',
+			score: 4,
+			passed: true,
+			explanation: 'The response passes by correctly identifying Rome as Italy\'s capital.',
 			created_at: '2023-01-01T00:00:00.000Z',
 		},
 	};

@@ -131,23 +131,55 @@ describe('ContextualAI LMUnit Operations', () => {
 			expect(scope.isDone()).toBe(true);
 		});
 
-		it('should handle different evaluation results', async () => {
-			const mockFailedResult = {
-				data: {
-					id: '123e4567-e89b-12d3-a456-426614174001',
-					query: 'What is the capital of Italy?',
-					response: 'The capital of Italy is Milan.',
-					unit_test: 'Is the response clear and well-structured?',
-					score: 1.2,
-					passed: false,
-					explanation: 'The response is brief and direct but contains incorrect information, which affects its overall clarity and usefulness.',
-					created_at: '2023-01-01T00:00:00.000Z',
-				},
-			};
+		it('should handle strongly failing evaluation (score 1)', async () => {
+			const mockStronglyFailsResult = fixtures.runLmunitStronglyFailsResult();
 
 			const scope = nock('https://api.contextual.ai')
 				.post('/v1/lmunit')
-				.reply(200, mockFailedResult);
+				.reply(200, mockStronglyFailsResult);
+
+			const workflowWithStronglyFailingTest = {
+				...runLmunitWorkflow,
+				nodes: runLmunitWorkflow.nodes.map(node =>
+					node.name === 'Run LMUnit'
+						? {
+							...node,
+							parameters: {
+								...node.parameters,
+								query: 'What is the capital of Italy?',
+								response: 'I don\'t know.',
+								unitTest: 'The response should provide the correct capital city of Italy.'
+							}
+						}
+						: node
+				)
+			};
+
+			const { executionData } = await executeWorkflow({
+				credentialsHelper,
+				workflow: workflowWithStronglyFailingTest,
+			});
+
+			const nodeResults = getRunTaskDataByNodeName(executionData, 'Run LMUnit');
+			expect(nodeResults.length).toBe(1);
+			const [nodeResult] = nodeResults;
+			expect(nodeResult.executionStatus).toBe('success');
+
+			const data = getTaskData(nodeResult);
+			const parsedData = typeof data === 'string' ? JSON.parse(data) : data;
+			expect(parsedData).toEqual(mockStronglyFailsResult);
+			expect(parsedData.data.passed).toBe(false);
+			expect(parsedData.data.score).toBe(1);
+
+			expect(scope.isDone()).toBe(true);
+		});
+
+		it('should handle failing evaluation (score 2)', async () => {
+			const mockFailsResult = fixtures.runLmunitFailsResult();
+
+			const scope = nock('https://api.contextual.ai')
+				.post('/v1/lmunit')
+				.reply(200, mockFailsResult);
 
 			const workflowWithFailingTest = {
 				...runLmunitWorkflow,
@@ -159,7 +191,7 @@ describe('ContextualAI LMUnit Operations', () => {
 								...node.parameters,
 								query: 'What is the capital of Italy?',
 								response: 'The capital of Italy is Milan.',
-								unitTest: 'The response should mention Rome as the capital of Italy.'
+								unitTest: 'The response should provide the correct capital city of Italy.'
 							}
 						}
 						: node
@@ -178,9 +210,138 @@ describe('ContextualAI LMUnit Operations', () => {
 
 			const data = getTaskData(nodeResult);
 			const parsedData = typeof data === 'string' ? JSON.parse(data) : data;
-			expect(parsedData).toEqual(mockFailedResult);
+			expect(parsedData).toEqual(mockFailsResult);
 			expect(parsedData.data.passed).toBe(false);
-			expect(parsedData.data.score).toBe(1.2);
+			expect(parsedData.data.score).toBe(2);
+
+			expect(scope.isDone()).toBe(true);
+		});
+
+		it('should handle neutral evaluation (score 3)', async () => {
+			const mockNeutralResult = fixtures.runLmunitNeutralResult();
+
+			const scope = nock('https://api.contextual.ai')
+				.post('/v1/lmunit')
+				.reply(200, mockNeutralResult);
+
+			const workflowWithNeutralTest = {
+				...runLmunitWorkflow,
+				nodes: runLmunitWorkflow.nodes.map(node =>
+					node.name === 'Run LMUnit'
+						? {
+							...node,
+							parameters: {
+								...node.parameters,
+								query: 'What is the capital of Italy?',
+								response: 'Italy has a capital city.',
+								unitTest: 'The response should provide the correct capital city of Italy.'
+							}
+						}
+						: node
+				)
+			};
+
+			const { executionData } = await executeWorkflow({
+				credentialsHelper,
+				workflow: workflowWithNeutralTest,
+			});
+
+			const nodeResults = getRunTaskDataByNodeName(executionData, 'Run LMUnit');
+			expect(nodeResults.length).toBe(1);
+			const [nodeResult] = nodeResults;
+			expect(nodeResult.executionStatus).toBe('success');
+
+			const data = getTaskData(nodeResult);
+			const parsedData = typeof data === 'string' ? JSON.parse(data) : data;
+			expect(parsedData).toEqual(mockNeutralResult);
+			expect(parsedData.data.passed).toBe(false);
+			expect(parsedData.data.score).toBe(3);
+
+			expect(scope.isDone()).toBe(true);
+		});
+
+		it('should handle passing evaluation (score 4)', async () => {
+			const mockPassesResult = fixtures.runLmunitPassesResult();
+
+			const scope = nock('https://api.contextual.ai')
+				.post('/v1/lmunit')
+				.reply(200, mockPassesResult);
+
+			const workflowWithPassingTest = {
+				...runLmunitWorkflow,
+				nodes: runLmunitWorkflow.nodes.map(node =>
+					node.name === 'Run LMUnit'
+						? {
+							...node,
+							parameters: {
+								...node.parameters,
+								query: 'What is the capital of Italy?',
+								response: 'The capital of Italy is Rome.',
+								unitTest: 'The response should provide the correct capital city of Italy.'
+							}
+						}
+						: node
+				)
+			};
+
+			const { executionData } = await executeWorkflow({
+				credentialsHelper,
+				workflow: workflowWithPassingTest,
+			});
+
+			const nodeResults = getRunTaskDataByNodeName(executionData, 'Run LMUnit');
+			expect(nodeResults.length).toBe(1);
+			const [nodeResult] = nodeResults;
+			expect(nodeResult.executionStatus).toBe('success');
+
+			const data = getTaskData(nodeResult);
+			const parsedData = typeof data === 'string' ? JSON.parse(data) : data;
+			expect(parsedData).toEqual(mockPassesResult);
+			expect(parsedData.data.passed).toBe(true);
+			expect(parsedData.data.score).toBe(4);
+
+			expect(scope.isDone()).toBe(true);
+		});
+
+		it('should handle strongly passing evaluation (score 5)', async () => {
+			const mockStronglyPassesResult = fixtures.runLmunitResult();
+
+			const scope = nock('https://api.contextual.ai')
+				.post('/v1/lmunit')
+				.reply(200, mockStronglyPassesResult);
+
+			const workflowWithStronglyPassingTest = {
+				...runLmunitWorkflow,
+				nodes: runLmunitWorkflow.nodes.map(node =>
+					node.name === 'Run LMUnit'
+						? {
+							...node,
+							parameters: {
+								...node.parameters,
+								query: 'What is the capital of France?',
+								response: 'The capital of France is Paris.',
+								unitTest: 'The response should mention Paris as the capital of France.'
+							}
+						}
+						: node
+				)
+			};
+
+			const { executionData } = await executeWorkflow({
+				credentialsHelper,
+				workflow: workflowWithStronglyPassingTest,
+			});
+
+			const nodeResults = getRunTaskDataByNodeName(executionData, 'Run LMUnit');
+			expect(nodeResults.length).toBe(1);
+			const [nodeResult] = nodeResults;
+			expect(nodeResult.executionStatus).toBe('success');
+
+			const data = getTaskData(nodeResult);
+			const parsedData = typeof data === 'string' ? JSON.parse(data) : data;
+			expect(parsedData).toEqual(mockStronglyPassesResult);
+			expect(parsedData.data.passed).toBe(true);
+			expect(parsedData.data.score).toBe(5);
 
 			expect(scope.isDone()).toBe(true);
 		});
