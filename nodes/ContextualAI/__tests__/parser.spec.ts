@@ -1,3 +1,6 @@
+/**
+ * Test suite for ContextualAI Parser operations that validates document parsing functionality and status tracking.
+ */
 import nock from 'nock';
 import { executeWorkflow } from './utils/executeWorkflow';
 import { CredentialsHelper } from './utils/credentialHelper';

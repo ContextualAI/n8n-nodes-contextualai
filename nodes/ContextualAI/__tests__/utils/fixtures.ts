@@ -1,3 +1,6 @@
+/**
+ * Mock data fixtures for ContextualAI API responses used in unit tests to simulate various API scenarios.
+ */
 export const createAgentResult = () => {
 	return {
 		data: {

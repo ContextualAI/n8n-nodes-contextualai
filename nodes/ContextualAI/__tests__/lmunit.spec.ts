@@ -1,3 +1,6 @@
+/**
+ * Test suite for ContextualAI LMUnit operations that validates the 1-5 scoring system for evaluating response quality.
+ */
 import nock from 'nock';
 import { executeWorkflow } from './utils/executeWorkflow';
 import { CredentialsHelper } from './utils/credentialHelper';

@@ -1,3 +1,6 @@
+/**
+ * Test suite for ContextualAI Reranker operations that validates document ranking functionality with relevance scoring.
+ */
 import nock from 'nock';
 import { executeWorkflow } from './utils/executeWorkflow';
 import { CredentialsHelper } from './utils/credentialHelper';

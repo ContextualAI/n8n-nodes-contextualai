@@ -1,3 +1,6 @@
+/**
+ * Test suite for ContextualAI Node that validates the main node configuration and basic functionality.
+ */
 import { ContextualAi } from '../ContextualAi.node';
 
 describe('ContextualAI Node', () => {

@@ -1,3 +1,6 @@
+/**
+ * Test suite for ContextualAI Query operations that validates agent querying functionality with retrieval and response generation.
+ */
 import nock from 'nock';
 import { executeWorkflow } from './utils/executeWorkflow';
 import { CredentialsHelper } from './utils/credentialHelper';
