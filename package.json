@@ -39,10 +39,10 @@
   "n8n": {
     "n8nNodesApiVersion": 1,
     "credentials": [
-      "dist/credentials/ContextualAiApi.credentials.js"
+      "credentials/ContextualAiApi.credentials.ts"
     ],
     "nodes": [
-      "dist/nodes/ContextualAI/ContextualAi.node.js"
+      "nodes/ContextualAI/ContextualAi.node.ts"
     ]
   },
   "devDependencies": {
