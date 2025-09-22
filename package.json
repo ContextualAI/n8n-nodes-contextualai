@@ -34,17 +34,15 @@
     "prepublishOnly": "npm run build && npm run lint -c .eslintrc.prepublish.js nodes credentials package.json"
   },
   "files": [
-    "dist",
-    "credentials",
-    "nodes"
+    "dist"
   ],
   "n8n": {
     "n8nNodesApiVersion": 1,
     "credentials": [
-      "credentials/ContextualAiApi.credentials.ts"
+      "dist/credentials/ContextualAiApi.credentials.js"
     ],
     "nodes": [
-      "nodes/ContextualAI/ContextualAi.node.ts"
+      "dist/nodes/ContextualAI/ContextualAi.node.js"
     ]
   },
   "devDependencies": {
