@@ -1,4 +1,4 @@
-import type { IAuthenticateGeneric, ICredentialType, INodeProperties } from 'n8n-workflow';
+import type { IAuthenticateGeneric, ICredentialTestRequest, ICredentialType, INodeProperties } from 'n8n-workflow';
 
 export class ContextualAiApi implements ICredentialType {
 	name = 'contextualAiApi';
@@ -24,6 +24,15 @@ export class ContextualAiApi implements ICredentialType {
 				Authorization: '=Bearer {{$credentials.apiKey}}',
 				accept: 'application/json',
 			},
+		},
+	};
+
+	// Allows n8n to verify the credential by making a simple authenticated request
+	test: ICredentialTestRequest = {
+		request: {
+			baseURL: 'https://api.contextual.ai',
+			url: '/v1/agents',
+			method: 'GET',
 		},
 	};
 }
