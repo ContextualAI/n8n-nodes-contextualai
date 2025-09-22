@@ -49,10 +49,18 @@ export async function deleteAgent(this: IExecuteFunctions, i: number): Promise<I
 		throw new NodeOperationError(this.getNode(), `Invalid agent ID format: ${agentId}. Expected a valid UUID.`);
 	}
 
-	const resp = await apiRequest.call(this, {
+	await apiRequest.call(this, {
 		method: 'DELETE',
 		uri: `/v1/agents/${agentId}`,
 	});
 
-	return { json: resp };
+	// Transform empty response from API to success response for n8n
+	const successResponse = {
+		data: {
+			success: true,
+			message: 'Agent deleted successfully',
+		},
+	};
+
+	return { json: successResponse };
 }
