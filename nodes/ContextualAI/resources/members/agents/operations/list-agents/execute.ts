@@ -58,5 +58,14 @@ export async function listAgents(this: IExecuteFunctions, i: number): Promise<IN
 		qs,
 	});
 
-	return { json: resp };
+	let parsedResp = resp;
+	if (typeof resp === 'string') {
+		try {
+			parsedResp = JSON.parse(resp);
+		} catch (e) {
+			throw new NodeOperationError(this.getNode(), 'Failed to parse API response as JSON');
+		}
+	}
+
+	return { json: parsedResp };
 }
