@@ -162,5 +162,6 @@ export async function ingestDocument(this: IExecuteFunctions, i: number): Promis
 			datastoreId,
 			uploaded,
 		},
+		pairedItem: { item: i },
 	};
 }

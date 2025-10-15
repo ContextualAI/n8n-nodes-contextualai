@@ -119,5 +119,6 @@ export async function parseDocument(this: IExecuteFunctions, i: number): Promise
 			status: 'submitted',
 			message: 'Parse job submitted successfully. Use the Parse Status operation to check progress.',
 		},
+		pairedItem: { item: i },
 	};
 }

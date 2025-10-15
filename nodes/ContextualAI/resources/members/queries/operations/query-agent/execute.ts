@@ -135,5 +135,8 @@ export async function queryAgent(this: IExecuteFunctions, i: number): Promise<IN
 		body,
 	});
 
-	return { json: resp };
+	return {
+		json: resp,
+		pairedItem: { item: i },
+	};
 }

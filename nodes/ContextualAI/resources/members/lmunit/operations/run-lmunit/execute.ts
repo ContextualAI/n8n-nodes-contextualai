@@ -51,5 +51,8 @@ export async function runLmunit(this: IExecuteFunctions, i: number): Promise<INo
 		body: { query, response, unit_test: unitTest },
 	});
 
-	return { json: resp };
+	return {
+		json: resp,
+		pairedItem: { item: i },
+	};
 }

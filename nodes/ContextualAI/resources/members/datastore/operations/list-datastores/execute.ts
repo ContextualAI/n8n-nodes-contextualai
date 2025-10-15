@@ -79,5 +79,8 @@ export async function listDatastores(this: IExecuteFunctions, i: number): Promis
 		}
 	}
 
-	return { json: parsedResp };
+	return {
+		json: parsedResp,
+		pairedItem: { item: i },
+	};
 }

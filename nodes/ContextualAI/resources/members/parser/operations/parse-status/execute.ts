@@ -71,6 +71,7 @@ export async function parseStatus(this: IExecuteFunctions, i: number): Promise<I
                 status: parsedResp?.status || parsedResp?.data?.status,
                 ...parsedResp,
             },
+            pairedItem: { item: i },
         };
 	} catch (error: any) {
 		throw new NodeApiError(this.getNode(), error, {

@@ -72,5 +72,8 @@ export async function rerankDocuments(this: IExecuteFunctions, i: number): Promi
 		body,
 	});
 
-	return { json: resp };
+	return {
+		json: resp,
+		pairedItem: { item: i },
+	};
 }

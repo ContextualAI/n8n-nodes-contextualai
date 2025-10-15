@@ -74,6 +74,7 @@ export async function getDocumentMetadata(this: IExecuteFunctions, i: number): P
 				documentId,
 				metadata: metadataResp,
 			},
+			pairedItem: { item: i },
 		};
 	} catch (error: any) {
 		throw new NodeApiError(this.getNode(), error, {

@@ -62,5 +62,8 @@ export async function deleteAgent(this: IExecuteFunctions, i: number): Promise<I
 		},
 	};
 
-	return { json: successResponse };
+	return {
+		json: successResponse,
+		pairedItem: { item: i },
+	};
 }

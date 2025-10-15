@@ -78,5 +78,6 @@ export async function createDatastore(this: IExecuteFunctions, i: number): Promi
 			name: datastoreName,
 			configuration: parsedConfiguration,
 		},
+		pairedItem: { item: i },
 	};
 }

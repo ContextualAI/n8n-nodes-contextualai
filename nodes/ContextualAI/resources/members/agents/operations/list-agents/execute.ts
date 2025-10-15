@@ -67,5 +67,8 @@ export async function listAgents(this: IExecuteFunctions, i: number): Promise<IN
 		}
 	}
 
-	return { json: parsedResp };
+	return {
+		json: parsedResp,
+		pairedItem: { item: i },
+	};
 }

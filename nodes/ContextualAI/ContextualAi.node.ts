@@ -4,6 +4,7 @@ import {
 	INodeType,
 	INodeTypeDescription,
 	NodeConnectionType,
+	NodeOperationError,
 } from 'n8n-workflow';
 import { properties } from './ContextualAI.properties';
 import { methods } from './ContextualAi.methods';
@@ -42,11 +43,24 @@ export class ContextualAi implements INodeType {
 		const returnData: INodeExecutionData[] = [];
 
 		for (let i = 0; i < items.length; i++) {
-			const data = await resourceRouter.call(this, i);
-			if (Array.isArray(data)) {
-				returnData.push(...data);
-			} else {
-				returnData.push(data);
+			try {
+				const data = await resourceRouter.call(this, i);
+				if (Array.isArray(data)) {
+					returnData.push(...data);
+				} else {
+					returnData.push(data);
+				}
+			} catch (error) {
+				if (this.continueOnFail()) {
+					returnData.push({
+						json: {
+							error: (error as Error).message,
+						},
+						pairedItem: { item: i },
+					});
+					continue;
+				}
+				throw new NodeOperationError(this.getNode(), error as Error, { itemIndex: i });
 			}
 		}
 

@@ -232,5 +232,6 @@ export async function createAgent(this: IExecuteFunctions, i: number): Promise<I
 			createdDatastoreId,
 			uploaded,
 		},
+		pairedItem: { item: i },
 	};
 }

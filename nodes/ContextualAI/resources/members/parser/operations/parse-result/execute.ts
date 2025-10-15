@@ -84,6 +84,7 @@ export async function parseResult(this: IExecuteFunctions, i: number): Promise<I
                 jobId,
                 ...parsedResp,
             },
+            pairedItem: { item: i },
         };
     } catch (error: any) {
         throw new NodeApiError(this.getNode(), error, {
