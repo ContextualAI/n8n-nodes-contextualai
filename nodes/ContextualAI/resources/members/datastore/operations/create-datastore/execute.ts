@@ -27,7 +27,7 @@ async function apiRequest(this: IExecuteFunctions, options: any) {
 
 	try {
 		await this.getCredentials(authenticationMethod);
-		return await this.helpers.requestWithAuthentication.call(this, authenticationMethod, requestOptions);
+		return await this.helpers.httpRequestWithAuthentication.call(this, authenticationMethod, requestOptions);
 	} catch (error) {
 		if ((error as any).response?.body) {
 			throw new NodeApiError(this.getNode(), error as any, {
