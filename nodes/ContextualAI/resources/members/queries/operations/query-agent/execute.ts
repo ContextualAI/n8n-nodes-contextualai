@@ -130,7 +130,7 @@ export async function queryAgent(this: IExecuteFunctions, i: number): Promise<IN
 
 	const resp = await apiRequest.call(this, {
 		method: 'POST',
-		uri: `/v1/agents/${agentId}/query`,
+		uri: `/v1/agents/${agentId}/query/acl`,
 		qs,
 		body,
 	});

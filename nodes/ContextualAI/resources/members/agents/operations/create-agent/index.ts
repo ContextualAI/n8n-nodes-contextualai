@@ -30,13 +30,100 @@ export const rawProperties: INodeProperties[] = [
 		displayOptions: { show: { resource: ['Agent'], operation: [name] } },
 	},
 	{
+		displayName: 'Configuration Mode',
+		name: 'configurationMode',
+		type: 'options',
+		default: 'preBuilt',
+		options: [
+			{
+				name: 'Pre-Built',
+				value: 'preBuilt',
+				description: 'Use pre-built Agent Composer templates',
+			},
+			{
+				name: 'Custom',
+				value: 'custom',
+				description: 'Provide your own Agent Composer YAML configuration',
+			},
+		],
+		displayOptions: { show: { resource: ['Agent'], operation: [name] } },
+	},
+	{
+		displayName: 'Pre-Built Template',
+		name: 'preBuiltTemplate',
+		type: 'options',
+		default: 'simpleSearch',
+		options: [
+			{
+				name: 'Simple Search',
+				value: 'simpleSearch',
+				description: 'Fast multi-modal retrieval from enterprise documents',
+			},
+			{
+				name: 'Agentic Search',
+				value: 'agenticSearch',
+				description: 'Multi-step reasoning, tool use, and customizable outputs',
+			},
+		],
+		displayOptions: {
+			show: {
+				resource: ['Agent'],
+				operation: [name],
+				configurationMode: ['preBuilt'],
+			},
+		},
+	},
+	{
+		displayName: 'Custom Template',
+		name: 'customAclYaml',
+		type: 'string',
+		default: '',
+		description:
+			'Paste your custom YAML config here. Reference to Contextual AI documentation for more details.',
+		typeOptions: {
+			rows: 10,
+		},
+		displayOptions: {
+			show: {
+				resource: ['Agent'],
+				operation: [name],
+				configurationMode: ['custom'],
+			},
+		},
+	},
+	{
+		displayName: 'Datastore Configuration',
+		name: 'datastoreConfigurationMode',
+		type: 'options',
+		default: 'name',
+		options: [
+			{
+				name: 'Create New Datastore (By Name)',
+				value: 'name',
+				description: 'Create a new datastore using the Datastore Name field below',
+			},
+			{
+				name: 'Use Existing Datastore ID(s)',
+				value: 'id',
+				description: 'Use one or more existing datastore IDs',
+			},
+		],
+		displayOptions: { show: { resource: ['Agent'], operation: [name] } },
+	},
+	{
 		displayName: 'Datastore Name',
 		name: 'datastoreName',
 		type: 'string',
 		default: '',
 		placeholder: 'e.g. Product Documentation',
 		description: 'Name for the document datastore',
-		displayOptions: { show: { resource: ['Agent'], operation: [name] } },
+		displayOptions: {
+			show: {
+				resource: ['Agent'],
+				operation: [name],
+				datastoreConfigurationMode: ['name'],
+			},
+		},
 	},
 	{
 		displayName: 'Datastore IDs',
@@ -45,7 +132,13 @@ export const rawProperties: INodeProperties[] = [
 		default: '',
 		description:
 			'Comma-separated list of datastore IDs to associate. Provide either this or Datastore Name.',
-		displayOptions: { show: { resource: ['Agent'], operation: [name] } },
+		displayOptions: {
+			show: {
+				resource: ['Agent'],
+				operation: [name],
+				datastoreConfigurationMode: ['id'],
+			},
+		},
 	},
 	{
 		displayName: 'Input Binary Field(s)',

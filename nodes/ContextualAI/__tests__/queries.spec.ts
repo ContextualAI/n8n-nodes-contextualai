@@ -29,7 +29,7 @@ describe('ContextualAI Query Operations', () => {
 			const mockQueryResult = fixtures.queryAgentResult();
 
 		const scope = nock('https://api.contextual.ai')
-			.post('/v1/agents/123e4567-e89b-12d3-a456-426614174000/query')
+			.post('/v1/agents/123e4567-e89b-12d3-a456-426614174000/query/acl')
 			.query({ include_retrieval_content_text: 'true' })
 			.reply(200, mockQueryResult);
 
