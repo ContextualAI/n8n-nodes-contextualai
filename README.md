@@ -46,6 +46,14 @@ This node supports a comprehensive range of Contextual AI operations, organized 
 ### Agent
 - **Create agent**: Create a new Contextual AI RAG agent with datastore and upload documents
   - Configure agent name, description, and datastore settings
+  - Choose datastore strategy:
+    - **Create New Datastore (By Name)** using a datastore name
+    - **Use Existing Datastore ID(s)** using one or more datastore UUIDs
+  - Configure Agent Composer setup:
+    - **Pre-Built** templates:
+      - **Simple Search** (fast multi-modal retrieval)
+      - **Agentic Search** (multi-step reasoning and tool use)
+    - **Custom** template by providing your own Agent Composer YAML
   - Upload multiple documents via binary data
   - Support for various document formats (PDF, DOC/DOCX, PPT/PPTX)
   - Automatic document processing and indexing
@@ -72,7 +80,7 @@ This node supports a comprehensive range of Contextual AI operations, organized 
   - Check datastore status and document counts
 
 ### Query
-- **Query agent**: Query existing Contextual AI agents with intelligent retrieval
+- **Query agent**: Query existing Contextual AI agents with Agent Composer
   - Natural language querying capabilities
   - Optional retrieval-only mode
   - Document readiness checking
@@ -161,10 +169,18 @@ This node has been tested with n8n version 1.57.0 and is compatible with:
 3. Configure your agent settings:
    - **Agent Name**: Give your agent a descriptive name
    - **Description**: Provide a brief description of the agent's purpose
-   - **Datastore Name**: Specify the datastore name for document storage
-4. Provide documents via binary data (supports multiple files)
-5. Configure document processing options if needed
-6. Execute to create the agent and upload documents
+4. Choose **Datastore Configuration**:
+   - **Create New Datastore (By Name)** and provide **Datastore Name**, or
+   - **Use Existing Datastore ID(s)** and provide one or more datastore UUIDs (comma-separated)
+5. Choose **Configuration Mode**:
+   - **Pre-Built**:
+     - **Simple Search** for fast retrieval-based Q&A
+     - **Agentic Search** for multi-turn, tool-using search behavior
+   - **Custom**:
+     - Paste your own Agent Composer YAML into **Custom Template**
+6. Provide documents via binary data (supports multiple files)
+7. Configure document processing options if needed
+8. Execute to create the agent and upload documents
 
 ### Datastore Management
 
@@ -251,6 +267,7 @@ This node has been tested with n8n version 1.57.0 and is compatible with:
 * [n8n Community Nodes Documentation](https://docs.n8n.io/integrations/community-nodes/)
 * [Contextual AI Documentation](https://docs.contextual.ai)
 * [Contextual AI API Reference](https://docs.contextual.ai/api-reference)
+* [Contextual AI Agent Composer](https://docs.contextual.ai/quickstarts/agent-composer#agent-composer)
 
 ## Troubleshooting
 
