@@ -1,4 +1,3 @@
-import { Credentials } from 'n8n-core';
 import {
 	ICredentialDataDecryptedObject,
 	ICredentialsHelper,
@@ -37,9 +36,10 @@ export class CredentialsHelper extends ICredentialsHelper {
 	): Promise<IHttpRequestOptions> {
 		if (typeName === 'contextualAiApi') {
 			const options = requestOptions as IHttpRequestOptions;
+			const apiKey = (credentials.apiKey as string) ?? (credentials.apiToken as string);
 			options.headers = {
 				...options.headers,
-				'Authorization': `Bearer ${credentials.apiToken}`,
+				Authorization: `Bearer ${apiKey}`,
 			};
 			return options;
 		}
@@ -60,7 +60,12 @@ export class CredentialsHelper extends ICredentialsHelper {
 		nodeCredentials: INodeCredentialsDetails,
 		type: string,
 	): Promise<ICredentials> {
-		return new Credentials({ id: null, name: '' }, '', '');
+		return {
+			id: nodeCredentials.id ?? undefined,
+			name: nodeCredentials.name,
+			type,
+			data: '',
+		} as ICredentials;
 	}
 
 	async getDecrypted(

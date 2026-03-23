@@ -86,13 +86,14 @@ describe('ContextualAI Agent Operations', () => {
 				nodes: createAgentWorkflow.nodes.map(node =>
 					node.name === 'Create Agent'
 						? {
-							...node,
-							parameters: {
-								...node.parameters,
-								datastoreName: '',
-								datastoreIds: 'invalid-uuid'
-							}
-						}
+								...node,
+								parameters: {
+									...node.parameters,
+									datastoreConfigurationMode: 'id',
+									datastoreName: '',
+									datastoreIds: 'invalid-uuid',
+								},
+						  }
 						: node
 				)
 			};

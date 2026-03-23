@@ -1,4 +1,5 @@
 import { IBinaryData, IExecuteFunctions, INodeExecutionData, NodeApiError, NodeOperationError } from 'n8n-workflow';
+import { AGENTIC_SEARCH_YAML, SIMPLE_SEARCH_YAML } from './aclTemplates';
 
 async function apiRequest(this: IExecuteFunctions, options: any) {
 	const { method, uri, qs, body, json = true, headers = {}, formData } = options;
@@ -42,7 +43,7 @@ async function apiRequest(this: IExecuteFunctions, options: any) {
 export async function createAgent(this: IExecuteFunctions, i: number): Promise<INodeExecutionData> {
 	const agentName = this.getNodeParameter('agentName', i) as string;
 	const agentDescription = this.getNodeParameter('agentDescription', i) as string;
-	const datastoreName = this.getNodeParameter('datastoreName', i) as string;
+	const datastoreName = this.getNodeParameter('datastoreName', i, '') as string;
 	const datastoreIdsStr = this.getNodeParameter('datastoreIds', i, '') as string;
 	const binaryPropertyName = this.getNodeParameter('binaryPropertyName', i) as string; // if empty, use all binaries
 	const documentMetadata = this.getNodeParameter('documentMetadata', i, '') as string;
@@ -50,6 +51,9 @@ export async function createAgent(this: IExecuteFunctions, i: number): Promise<I
 	const noRetrievalSystemPrompt = this.getNodeParameter('noRetrievalSystemPrompt', i, '') as string;
 	const multiturnSystemPrompt = this.getNodeParameter('multiturnSystemPrompt', i, '') as string;
 	const filterPrompt = this.getNodeParameter('filterPrompt', i, '') as string;
+	const configurationMode = this.getNodeParameter('configurationMode', i, 'preBuilt') as string;
+	const preBuiltTemplate = this.getNodeParameter('preBuiltTemplate', i, 'agenticSearch') as string;
+	const customYaml = this.getNodeParameter('customAclYaml', i, '') as string;
 	const suggestedQueriesStr = this.getNodeParameter('suggestedQueries', i, '') as string;
 	const agentConfigsStr = this.getNodeParameter('agentConfigs', i, '') as string;
 
@@ -82,6 +86,32 @@ export async function createAgent(this: IExecuteFunctions, i: number): Promise<I
 		} catch (e) {
 			throw new NodeOperationError(this.getNode(), 'Agent Configs must be valid JSON');
 		}
+	}
+
+	let agentConfigs: any = parsedAgentConfigs || {};
+
+	if (configurationMode === 'preBuilt') {
+		const aclYaml =
+			preBuiltTemplate === 'agenticSearch' ? AGENTIC_SEARCH_YAML : SIMPLE_SEARCH_YAML;
+
+		agentConfigs.acl_config = {
+			...(agentConfigs.acl_config || {}),
+			acl_active: true,
+			acl_yaml: aclYaml,
+		};
+	} else if (configurationMode === 'custom') {
+		if (!customYaml) {
+			throw new NodeOperationError(
+				this.getNode(),
+				'Agent Composer YAML is required when Configuration Mode is Custom',
+			);
+		}
+
+		agentConfigs.acl_config = {
+			...(agentConfigs.acl_config || {}),
+			acl_active: true,
+			acl_yaml: customYaml,
+		};
 	}
 
 	// 1) Resolve datastore IDs: either provided or create new if name given
@@ -204,20 +234,25 @@ export async function createAgent(this: IExecuteFunctions, i: number): Promise<I
 	}
 
 	// 3) Create agent
+	const body: any = {
+		name: agentName,
+		description: agentDescription,
+		datastore_ids: datastoreIds,
+		...(systemPrompt && { system_prompt: systemPrompt }),
+		...(noRetrievalSystemPrompt && { no_retrieval_system_prompt: noRetrievalSystemPrompt }),
+		...(multiturnSystemPrompt && { multiturn_system_prompt: multiturnSystemPrompt }),
+		...(filterPrompt && { filter_prompt: filterPrompt }),
+		...(suggestedQueries.length > 0 && { suggested_queries: suggestedQueries }),
+	};
+
+	if (agentConfigs && Object.keys(agentConfigs).length > 0) {
+		body.agent_configs = agentConfigs;
+	}
+
 	const agentResp = await apiRequest.call(this, {
 		method: 'POST',
 		uri: '/v1/agents',
-		body: {
-			name: agentName,
-			description: agentDescription,
-			datastore_ids: datastoreIds,
-			...(systemPrompt && { system_prompt: systemPrompt }),
-			...(noRetrievalSystemPrompt && { no_retrieval_system_prompt: noRetrievalSystemPrompt }),
-			...(multiturnSystemPrompt && { multiturn_system_prompt: multiturnSystemPrompt }),
-			...(filterPrompt && { filter_prompt: filterPrompt }),
-			...(suggestedQueries.length > 0 && { suggested_queries: suggestedQueries }),
-			...(parsedAgentConfigs && { agent_configs: parsedAgentConfigs }),
-		},
+		body,
 	});
 
 	const agentId = agentResp?.id || agentResp?.data?.id;
